@@ -29,7 +29,7 @@ function CustomTooltip({ active, payload }) {
 
 // custom label inside the donut center
 function CenterLabel({ viewBox, total }) {
-  if (!viewBox) return null        // ← add this line
+   if (!viewBox) return null  
   const { cx, cy } = viewBox
   return (
     <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
@@ -51,7 +51,7 @@ export default function CategoryChart() {
       <div className="chart-header">
         <div>
           <h3 className="chart-title">Spending Breakdown</h3>
-          <p className="chart-subtitle">By category — all months</p>
+          <p className="chart-subtitle">By category - all months</p>
         </div>
       </div>
 

@@ -1,5 +1,11 @@
 import { useApp } from "../../context/AppContext"
+import CustomSelect from "../ui/CustomSelect"
 import "./Topbar.css"
+
+const ROLE_OPTIONS = [
+  { value: "viewer", label: "👁 Viewer" },
+  { value: "admin",  label: "🛠 Admin" },
+]
 
 export default function Topbar({ activeTab, setActiveTab }) {
   const { role, setRole, darkMode, setDarkMode } = useApp()
@@ -7,7 +13,6 @@ export default function Topbar({ activeTab, setActiveTab }) {
   function handleDarkToggle() {
     const next = !darkMode
     setDarkMode(next)
-    // applying class to body so css variables kick in
     document.body.classList.toggle("dark", next)
   }
 
@@ -33,22 +38,16 @@ export default function Topbar({ activeTab, setActiveTab }) {
       </nav>
 
       <div className="topbar-right">
-        {/* role switcher - this is the rbac demo part */}
-        <select
-          className="role-select"
+        <CustomSelect
+          id="role-switcher"
+          name="role"
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          title="Switch role"
-        >
-          <option value="viewer">👁 Viewer</option>
-          <option value="admin">🛠 Admin</option>
-        </select>
+          options={ROLE_OPTIONS}
+          className="role-select-custom"
+        />
 
-        <button
-          className="dark-toggle"
-          onClick={handleDarkToggle}
-          title="Toggle dark mode"
-        >
+        <button className="dark-toggle" onClick={handleDarkToggle} title="Toggle dark mode">
           {darkMode ? "☀️" : "🌙"}
         </button>
       </div>

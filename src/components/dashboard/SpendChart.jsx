@@ -37,7 +37,7 @@ export default function SpendChart() {
       <div className="chart-header">
         <div>
           <h3 className="chart-title">Monthly Overview</h3>
-          <p className="chart-subtitle">Income vs Expenses — Jan to Mar 2026</p>
+          <p className="chart-subtitle">Income vs Expenses - Jan to Mar 2026</p>
         </div>
       </div>
 

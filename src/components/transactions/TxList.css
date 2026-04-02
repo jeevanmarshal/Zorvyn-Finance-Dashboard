@@ -91,3 +91,20 @@
   font-size: 13px;
   color: var(--text-muted);
 }
+
+/* ---- mobile fixes ---- */
+@media (max-width: 600px) {
+  .tx-list__header { flex-direction: column; align-items: stretch; gap: 10px; }
+  .tx-list__actions { justify-content: flex-end; }
+
+  .tx-header-btn {
+    height: 40px;
+    font-size: 13px;
+    padding: 0 14px;
+  }
+
+  .tx-list__table {
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+}

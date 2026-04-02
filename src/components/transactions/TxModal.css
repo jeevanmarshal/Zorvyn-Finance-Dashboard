@@ -1,76 +1,117 @@
+/* ============================================================
+   BACKDROP - fixed to viewport, never moves
+   Body is position:fixed (set in JSX) so this truly locks
+   ============================================================ */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 300;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  z-index: 200;
-  padding: 20px;
-  animation: fadeIn 0.15s ease;
+  padding: 64px 16px 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
+/* ============================================================
+   MODAL CARD - overflow visible so custom dropdowns show
+   ============================================================ */
 .modal {
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
   width: 100%;
   max-width: 460px;
-  animation: slideUp 0.18s ease;
+  flex-shrink: 0;
+  overflow: visible;
+  transition: background var(--dur-normal) var(--ease-smooth),
+              border-color var(--dur-normal) var(--ease-smooth);
 }
 
-@keyframes slideUp {
-  from { transform: translateY(16px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+.modal-enter {
+  animation: modalSlideDown var(--dur-normal) var(--ease-out-quart) both;
+}
+
+@keyframes modalSlideDown {
+  from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== MOBILE: top-aligned, full width, scrollable inside ===== */
+@media (max-width: 520px) {
+  .modal-backdrop {
+    /* keep flex-start + top padding — same as desktop but tighter */
+    align-items: flex-start;
+    padding: 16px 12px 80px; /* bottom pad clears mobile nav bar */
+    overflow-y: auto;
+  }
+
+  .modal {
+    max-width: 100%;
+    width: 100%;
+    border-radius: var(--radius);
+    /* scroll inside if content is taller than viewport */
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: modalSlideDown var(--dur-normal) var(--ease-out-quart) both !important;
+  }
 }
 
 .modal-header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px 16px;
+  padding: 18px 20px 14px;
   border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 
-.modal-title {
-  font-size: 16px;
-  font-weight: 650;
-  color: var(--text-primary);
-}
+.modal-title { font-size: 15px; font-weight: 650; color: var(--text-primary); }
 
 .modal-close {
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   border-radius: 6px;
   font-size: 13px;
   color: var(--text-muted);
   background: var(--surface-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--dur-fast) var(--ease-smooth),
+              transform  var(--dur-fast) var(--ease-spring);
 }
-
-.modal-close:hover {
-  background: var(--border);
-  color: var(--text-primary);
-}
+.modal-close:hover { background: var(--border); color: var(--text-primary); transform: scale(1.1); }
 
 .modal-body {
-  padding: 20px 24px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow: visible;
 }
 
 .modal-row {
   display: flex;
   gap: 12px;
 }
+.modal-row .modal-label { flex: 1; min-width: 0; }
 
-.modal-row .modal-label {
-  flex: 1;
+/* date row - day/month/year side by side */
+.date-row {
+  display: flex;
+  gap: 8px;
 }
+
+/* day: narrow, month: wider, year: narrow */
+.date-row .custom-select:nth-child(1) { flex: 1; }
+.date-row .custom-select:nth-child(2) { flex: 2; }
+.date-row .custom-select:nth-child(3) { flex: 1.2; }
+
+/* make sure date dropdowns don't get cut off */
+.date-row .custom-select__list { z-index: 600; }
 
 .modal-label {
   display: flex;
@@ -82,7 +123,7 @@
 }
 
 .modal-input {
-  height: 38px;
+  height: 40px;
   padding: 0 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -90,59 +131,65 @@
   color: var(--text-primary);
   font-size: 14px;
   outline: none;
-  transition: border-color 0.15s;
+  width: 100%;
   font-family: var(--font);
+  transition: border-color var(--dur-fast) var(--ease-smooth),
+              box-shadow    var(--dur-fast) var(--ease-smooth),
+              background    var(--dur-fast) var(--ease-smooth);
 }
-
 .modal-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+  box-shadow: 0 0 0 3px rgba(15,118,110,0.15);
   background: var(--surface);
 }
 
-.modal-error {
-  font-size: 13px;
-  color: var(--expense-color);
-  font-weight: 500;
+/* match CustomSelect trigger height to modal-input */
+.modal-body .custom-select__trigger {
+  height: 40px;
+  font-size: 14px;
+  background: var(--surface-2);
 }
+.modal-body .custom-select--open .custom-select__trigger {
+  background: var(--surface);
+}
+
+.modal-error { font-size: 13px; color: var(--expense-color); font-weight: 500; }
 
 .modal-footer {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-  padding: 16px 24px 20px;
+  padding: 14px 20px 18px;
   border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
 }
 
 .modal-btn {
-  height: 38px;
+  height: 40px;
   padding: 0 18px;
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
-  transition: all 0.15s;
+  transition: background var(--dur-fast) var(--ease-smooth),
+              transform  var(--dur-fast) var(--ease-spring),
+              box-shadow var(--dur-fast) var(--ease-smooth);
 }
+.modal-btn:active { transform: scale(0.96); }
 
 .modal-btn--cancel {
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-secondary);
 }
+.modal-btn--cancel:hover { background: var(--border); }
 
-.modal-btn--cancel:hover {
-  background: var(--border);
-}
+.modal-btn--submit { background: var(--accent); color: white; border: none; }
+.modal-btn--submit:hover { background: var(--accent-hover); box-shadow: 0 3px 10px rgba(15,118,110,0.3); }
 
-.modal-btn--submit {
-  background: var(--accent);
-  color: white;
-  border: none;
-}
-
-.modal-btn--submit:hover {
-  background: var(--accent-hover);
-}
-
-@media (max-width: 480px) {
-  .modal-row { flex-direction: column; }
+@media (max-width: 520px) {
+  /* buttons stay in a row on mobile — no reverse stacking needed */
+  .modal-footer { padding: 12px 14px 14px; gap: 8px; }
+  .modal-btn    { height: 44px; font-size: 14px; flex: 1; }
+  .modal-body   { padding: 14px; }
+  .modal-row    { flex-direction: column; gap: 10px; }
 }

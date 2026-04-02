@@ -8,6 +8,13 @@
   padding: 0;
 }
 
+/* prevent horizontal scroll on all screen sizes */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 :root {
   --accent: #0f766e;
   --accent-light: #ccfbf1;
@@ -32,9 +39,8 @@
 
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* ---- animation timing ---- */
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);  /* slight overshoot */
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
   --dur-fast:   0.18s;
   --dur-normal: 0.28s;
@@ -74,6 +80,8 @@ button {
 
 input, select {
   font-family: var(--font);
+  /* border-radius on ALL selects and inputs globally */
+  border-radius: var(--radius-sm);
 }
 
 /* ---- card ---- */
@@ -88,102 +96,51 @@ input, select {
               box-shadow var(--dur-normal) var(--ease-smooth);
 }
 
-/* ============================================================
-   PAGE / TAB TRANSITIONS
-   Page slides in from the right when switching forward,
-   from the left when switching back. We use a single
-   "enter" animation — the key prop on the wrapper forces
-   a fresh mount every tab change.
-   ============================================================ */
-
+/* ---- page / tab transition ---- */
 .page-enter {
   animation: pageSlideIn var(--dur-slow) var(--ease-out-quart) both;
 }
 
 @keyframes pageSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ============================================================
-   STAGGERED CARD ENTRANCE
-   Add .stagger-child to each card and they waterfall in.
-   ============================================================ */
-
+/* ---- staggered card entrance ---- */
 .stagger-child {
   animation: staggerIn var(--dur-slow) var(--ease-out-quart) both;
 }
-
-/* each card gets a delay via inline style or nth-child */
 .stagger-child:nth-child(1) { animation-delay: 0.00s; }
 .stagger-child:nth-child(2) { animation-delay: 0.07s; }
 .stagger-child:nth-child(3) { animation-delay: 0.14s; }
 .stagger-child:nth-child(4) { animation-delay: 0.21s; }
 
 @keyframes staggerIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ============================================================
-   TRANSACTION ROW ENTRANCE
-   Rows stagger in when the list re-renders (filter change).
-   Applied via inline style delay in TxRow.
-   ============================================================ */
-
+/* ---- transaction row entrance ---- */
 .tx-row-enter {
   animation: rowSlideIn var(--dur-normal) var(--ease-out-quart) both;
 }
 
 @keyframes rowSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ============================================================
-   EMPTY STATE ANIMATION
-   ============================================================ */
-
+/* ---- empty state ---- */
 .empty-enter {
   animation: emptyBounceIn 0.5s var(--ease-spring) both;
 }
 
 @keyframes emptyBounceIn {
   from { opacity: 0; transform: scale(0.85) translateY(10px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ============================================================
-   MODAL ENTRANCE
-   ============================================================ */
-
-.modal-enter {
-  animation: modalIn var(--dur-normal) var(--ease-spring) both;
-}
-
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(0.94) translateY(12px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
-}
-
+/* ---- modal backdrop ---- */
 .backdrop-enter {
   animation: backdropIn var(--dur-normal) var(--ease-smooth) both;
 }
@@ -193,14 +150,12 @@ input, select {
   to   { opacity: 1; }
 }
 
-/* ============================================================
-   FOCUS RING — shared glow for all inputs/selects
-   ============================================================ */
+/* ---- modal slide down from top ---- */
+.modal-enter {
+  animation: modalSlideDown var(--dur-normal) var(--ease-out-quart) both;
+}
 
-.focus-ring:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
-  transition: box-shadow var(--dur-fast) var(--ease-smooth),
-              border-color var(--dur-fast) var(--ease-smooth);
+@keyframes modalSlideDown {
+  from { opacity: 0; transform: translateY(-20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }

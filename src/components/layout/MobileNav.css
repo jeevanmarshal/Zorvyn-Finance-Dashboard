@@ -6,9 +6,12 @@
   right: 0;
   z-index: 100;
   background: var(--surface);
+  /* rounded top corners so it sits nicely above the screen edge */
+  border-radius: 16px 16px 0 0;
   border-top: 1px solid var(--border);
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.09);
-  padding: 6px 0 env(safe-area-inset-bottom, 6px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  /* respect iPhone notch / Android nav bar */
+  padding: 8px 8px env(safe-area-inset-bottom, 8px);
   transition: background var(--dur-normal) var(--ease-smooth),
               border-color var(--dur-normal) var(--ease-smooth);
 }
@@ -23,12 +26,17 @@
   color: var(--text-muted);
   background: none;
   border: none;
+  border-radius: var(--radius-sm);
   transition:
     color     var(--dur-normal) var(--ease-smooth),
-    transform var(--dur-normal) var(--ease-spring);
+    transform var(--dur-normal) var(--ease-spring),
+    background var(--dur-fast)  var(--ease-smooth);
 }
 
-.mobile-nav__btn:active { transform: scale(0.9); }
+.mobile-nav__btn:active {
+  transform: scale(0.88);
+  background: var(--surface-2);
+}
 
 .mobile-nav__btn--active {
   color: var(--accent);
@@ -41,7 +49,7 @@
 }
 
 .mobile-nav__btn--active .mobile-nav__icon {
-  transform: scale(1.15);
+  transform: scale(1.18);
 }
 
 .mobile-nav__label {
@@ -53,5 +61,4 @@
 
 @media (max-width: 540px) {
   .mobile-nav { display: flex; }
-  .app-main   { padding-bottom: 80px; }
 }

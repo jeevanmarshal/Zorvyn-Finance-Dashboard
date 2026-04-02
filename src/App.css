@@ -2,24 +2,27 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 28px 24px;
+  /* prevent children from breaking out of the viewport */
+  min-width: 0;
+  overflow-x: hidden;
 }
 
-/* side-by-side charts row */
 .charts-row {
   display: flex;
   gap: 16px;
   margin-top: 20px;
+  min-width: 0;
 }
 
-/* on tablets, stack the charts vertically */
 @media (max-width: 800px) {
-  .charts-row {
-    flex-direction: column;
-  }
+  .charts-row { flex-direction: column; }
 }
 
 @media (max-width: 600px) {
-  .app-main {
-    padding: 20px 16px;
-  }
+  .app-main { padding: 16px 12px; }
+}
+
+/* mobile: push content above the fixed bottom nav */
+@media (max-width: 540px) {
+  .app-main { padding-bottom: 84px; }
 }

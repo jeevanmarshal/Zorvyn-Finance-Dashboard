@@ -135,3 +135,50 @@
 @media (max-width: 540px) {
   .topbar-tabs { display: none; }
 }
+
+/* ---- mobile topbar fixes ---- */
+@media (max-width: 540px) {
+  .topbar {
+    padding: 0 14px;
+    gap: 8px;
+  }
+
+  .topbar-title { font-size: 15px; }
+
+  .role-select {
+    font-size: 12px;
+    padding: 5px 7px;
+    max-width: 110px;
+    border-radius: var(--radius-sm);
+  }
+
+  .dark-toggle {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+}
+
+/* custom role select sizing in topbar */
+.role-select-custom {
+  width: 120px;
+}
+
+.role-select-custom .custom-select__trigger {
+  height: 34px;
+  font-size: 13px;
+  padding: 0 10px;
+  background: var(--surface-2);
+}
+
+/* role select dropdown should open downward, below topbar */
+.role-select-custom .custom-select__list {
+  z-index: 9999;
+  min-width: 130px;
+}
+
+@media (max-width: 540px) {
+  .role-select-custom { width: 100px; }
+  .role-select-custom .custom-select__trigger { height: 30px; font-size: 12px; }
+}

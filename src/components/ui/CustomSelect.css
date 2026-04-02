@@ -1,0 +1,146 @@
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+/* the visible trigger button */
+.custom-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--dur-fast) var(--ease-smooth),
+    background   var(--dur-fast) var(--ease-smooth),
+    box-shadow   var(--dur-fast) var(--ease-smooth),
+    transform    var(--dur-fast) var(--ease-spring);
+  user-select: none;
+}
+
+.custom-select__trigger:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.custom-select--open .custom-select__trigger {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  background: var(--surface);
+}
+
+.custom-select__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-select__arrow {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: 6px;
+  transition: transform var(--dur-normal) var(--ease-spring);
+  display: inline-block;
+}
+
+.custom-select--open .custom-select__arrow {
+  transform: rotate(180deg);
+}
+
+/* the dropdown list */
+.custom-select__list {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 500;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.13);
+  list-style: none;
+  padding: 4px;
+  margin: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  /* scroll inside the list, never outside */
+  overscroll-behavior: contain;
+  /* smooth entrance */
+  animation: listOpen 0.18s var(--ease-out-quart) both;
+}
+
+/* flip upward if not enough space below */
+.custom-select__list--up {
+  top: auto;
+  bottom: calc(100% + 5px);
+  animation: listOpenUp 0.18s var(--ease-out-quart) both;
+}
+
+@keyframes listOpen {
+  from { opacity: 0; transform: translateY(-6px) scaleY(0.95); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@keyframes listOpenUp {
+  from { opacity: 0; transform: translateY(6px) scaleY(0.95); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+.custom-select__option {
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-smooth),
+              color     var(--dur-fast) var(--ease-smooth);
+}
+
+.custom-select__option:hover {
+  background: var(--surface-2);
+  color: var(--accent);
+}
+
+.custom-select__option--selected {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+body.dark .custom-select__option--selected {
+  background: rgba(15, 118, 110, 0.2);
+}
+
+/* inside modal - needs higher z-index because modal is z-index 200 */
+.modal .custom-select__list {
+  z-index: 600;
+}
+
+/* modal input height match */
+.modal .custom-select__trigger {
+  height: 40px;
+  font-size: 14px;
+  background: var(--surface-2);
+}
+
+.modal .custom-select--open .custom-select__trigger {
+  background: var(--surface);
+}
+
+/* mobile: larger tap targets */
+@media (max-width: 520px) {
+  .custom-select__trigger { height: 42px; font-size: 14px; }
+  .custom-select__option  { padding: 11px 12px; font-size: 14px; }
+  .custom-select__list    { max-height: 200px; }
+}

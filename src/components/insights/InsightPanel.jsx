@@ -59,7 +59,7 @@ export default function InsightPanel() {
   // average spend per transaction on weekends vs weekdays
   const avgWeekend = weekendExpenseCount > 0 ? Math.round(weekendTotal / weekendExpenseCount) : 0
   const avgWeekday = weekdayExpenseCount > 0 ? Math.round(weekdayTotal / weekdayExpenseCount) : 0
-  const weekendMultiple = avgWeekday > 0 ? (avgWeekend / avgWeekday).toFixed(1) : "—"
+  const weekendMultiple = avgWeekday > 0 ? (avgWeekend / avgWeekday).toFixed(1) : "-"
 
   // --- insight 4: income sources ---
   const freelanceIncome = transactions
@@ -79,7 +79,7 @@ export default function InsightPanel() {
     <div className="insight-panel page-fade">
       <div className="insight-panel__header">
         <h2 className="insight-panel__title">Insights</h2>
-        <p className="insight-panel__sub">Patterns from your Jan – Mar 2026 data</p>
+        <p className="insight-panel__sub">Patterns from your Jan - Mar 2026 data</p>
       </div>
 
       <div className="insight-grid">
@@ -92,7 +92,7 @@ export default function InsightPanel() {
             <div>
               <div className="insight-card__value">{topCategory?.name}</div>
               <div className="insight-card__detail">
-                {formatCurrency(topCategory?.value)} — {topCategoryPercent}% of total spending
+                {formatCurrency(topCategory?.value)} - {topCategoryPercent}% of total spending
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function InsightPanel() {
             <>
               <div className="insight-card__main">
                 <span className={`insight-badge insight-badge--${momDirection}`}>
-                  {momDirection === "up" ? "▲" : momDirection === "down" ? "▼" : "—"}
+                  {momDirection === "up" ? "▲" : momDirection === "down" ? "▼" : "-"}
                   {" "}{Math.abs(momChange)}%
                 </span>
                 <div>
@@ -120,7 +120,7 @@ export default function InsightPanel() {
                     {momDirection === "up" ? "Spending increased" : momDirection === "down" ? "Spending decreased" : "No change"}
                   </div>
                   <div className="insight-card__detail">
-                    {prevMonth.month}: {formatCurrency(prevMonth.expense)} → {currMonth.month}: {formatCurrency(currMonth.expense)}
+                    {prevMonth.month}: {formatCurrency(prevMonth.expense)} to {currMonth.month}: {formatCurrency(currMonth.expense)}
                   </div>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function InsightPanel() {
                 {weekendMultiple}x more on weekends
               </div>
               <div className="insight-card__detail">
-                Avg per transaction — Weekend: {formatCurrency(avgWeekend)} · Weekday: {formatCurrency(avgWeekday)}
+                Avg per transaction - Weekend: {formatCurrency(avgWeekend)} · Weekday: {formatCurrency(avgWeekday)}
               </div>
             </div>
           </div>

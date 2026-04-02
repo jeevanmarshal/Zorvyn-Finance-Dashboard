@@ -28,14 +28,14 @@ export default function SummaryCards() {
       value: formatCurrency(totalIncome),
       icon: "📈",
       colorClass: "card--income",
-      sub: "Jan – Mar 2026",
+      sub: "Jan - Mar 2026",
     },
     {
       label: "Total Expenses",
       value: formatCurrency(totalExpenses),
       icon: "📉",
       colorClass: "card--expense",
-      sub: "Jan – Mar 2026",
+      sub: "Jan - Mar 2026",
     },
     {
       label: "Savings Rate",
