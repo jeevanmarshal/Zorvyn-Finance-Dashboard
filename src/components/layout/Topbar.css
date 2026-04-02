@@ -11,6 +11,8 @@
   z-index: 100;
   box-shadow: var(--shadow-sm);
   gap: 16px;
+  transition: background var(--dur-normal) var(--ease-smooth),
+              border-color var(--dur-normal) var(--ease-smooth);
 }
 
 .topbar-left {
@@ -20,9 +22,7 @@
   flex-shrink: 0;
 }
 
-.topbar-logo {
-  font-size: 20px;
-}
+.topbar-logo { font-size: 20px; }
 
 .topbar-title {
   font-size: 17px;
@@ -31,39 +31,54 @@
   letter-spacing: -0.3px;
 }
 
+/* ---- tab strip ---- */
 .topbar-tabs {
   display: flex;
   gap: 4px;
+  background: var(--surface-2);
+  border-radius: 24px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  transition: background var(--dur-normal) var(--ease-smooth);
 }
 
 .tab-btn {
-  padding: 6px 16px;
+  position: relative;
+  padding: 6px 18px;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
-  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
   background: transparent;
+  border: none;
+  cursor: pointer;
+  /* smooth everything */
+  transition:
+    color      var(--dur-normal) var(--ease-smooth),
+    background var(--dur-normal) var(--ease-smooth),
+    transform  var(--dur-fast)   var(--ease-spring),
+    box-shadow var(--dur-normal) var(--ease-smooth);
+  will-change: transform;
 }
 
-.tab-btn:hover {
-  background: var(--surface-2);
+.tab-btn:hover:not(.tab-btn--active) {
   color: var(--text-primary);
+  background: var(--border);
   transform: translateY(-1px);
+}
+
+.tab-btn:active {
+  transform: scale(0.96);
 }
 
 .tab-btn--active {
   background: var(--accent);
   color: #fff;
-  transform: none;
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.35);
+  transform: translateY(0);
 }
 
-.tab-btn--active:hover {
-  background: var(--accent-hover);
-  color: #fff;
-  transform: none;
-}
-
+/* ---- right side controls ---- */
 .topbar-right {
   display: flex;
   align-items: center;
@@ -81,10 +96,15 @@
   font-weight: 500;
   cursor: pointer;
   outline: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-smooth),
+    background   var(--dur-fast) var(--ease-smooth),
+    box-shadow   var(--dur-fast) var(--ease-smooth);
 }
 
 .role-select:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
 }
 
 .dark-toggle {
@@ -96,16 +116,22 @@
   justify-content: center;
   background: var(--surface-2);
   font-size: 16px;
-  transition: background 0.15s;
+  border: 1px solid var(--border);
+  transition:
+    background var(--dur-fast) var(--ease-smooth),
+    transform  var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) var(--ease-smooth);
 }
 
 .dark-toggle:hover {
   background: var(--border);
+  transform: rotate(20deg) scale(1.08);
 }
 
-/* mobile: hide tab labels on very small screens */
+.dark-toggle:active {
+  transform: scale(0.9);
+}
+
 @media (max-width: 540px) {
-  .topbar-tabs {
-    display: none;
-  }
+  .topbar-tabs { display: none; }
 }

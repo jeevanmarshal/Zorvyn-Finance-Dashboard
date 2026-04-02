@@ -49,7 +49,7 @@ export default function SummaryCards() {
   return (
     <div className="summary-grid">
       {cards.map((card) => (
-        <div key={card.label} className={`summary-card ${card.colorClass}`}>
+        <div key={card.label} className={`summary-card ${card.colorClass} stagger-child`}>
           <div className="summary-card__top">
             <span className="summary-card__icon">{card.icon}</span>
             <span className="summary-card__label">{card.label}</span>

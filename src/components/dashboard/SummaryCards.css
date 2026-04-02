@@ -13,11 +13,17 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: default;
+  transition:
+    transform    var(--dur-normal) var(--ease-spring),
+    box-shadow   var(--dur-normal) var(--ease-smooth),
+    border-color var(--dur-normal) var(--ease-smooth),
+    background   var(--dur-normal) var(--ease-smooth);
+  will-change: transform;
 }
 
 .summary-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px) scale(1.01);
   box-shadow: var(--shadow);
 }
 
@@ -29,6 +35,11 @@
 
 .summary-card__icon {
   font-size: 18px;
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+.summary-card:hover .summary-card__icon {
+  transform: scale(1.2) rotate(-5deg);
 }
 
 .summary-card__label {
@@ -37,6 +48,7 @@
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.4px;
+  transition: color var(--dur-normal) var(--ease-smooth);
 }
 
 .summary-card__value {
@@ -44,31 +56,26 @@
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--text-primary);
+  transition: color var(--dur-normal) var(--ease-smooth);
 }
 
 .summary-card__sub {
   font-size: 12px;
   color: var(--text-muted);
+  transition: color var(--dur-normal) var(--ease-smooth);
 }
 
-/* accent strip on the left edge */
+/* accent strip */
 .summary-card--balance { border-left: 4px solid var(--accent); }
 .summary-card--income  { border-left: 4px solid var(--income-color); }
 .summary-card--expense { border-left: 4px solid var(--expense-color); }
 .summary-card--savings { border-left: 4px solid #7c3aed; }
 
-/* responsive */
 @media (max-width: 900px) {
-  .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 480px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
-  .summary-card__value {
-    font-size: 20px;
-  }
+  .summary-grid { grid-template-columns: 1fr; }
+  .summary-card__value { font-size: 20px; }
 }

@@ -12,7 +12,7 @@ import "./App.css"
 
 function DashboardPage() {
   return (
-    <div className="page-fade">
+    <div>
       <SummaryCards />
       <div className="charts-row">
         <SpendChart />
@@ -25,13 +25,17 @@ function DashboardPage() {
 function AppContent() {
   const [activeTab, setActiveTab] = useState("Dashboard")
 
+  // the key prop here is the magic — when activeTab changes React unmounts
+  // and remounts the wrapper, which re-triggers the page-enter animation
   return (
     <div>
       <Topbar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="app-main">
-        {activeTab === "Dashboard"    && <DashboardPage />}
-        {activeTab === "Transactions" && <TxList />}
-        {activeTab === "Insights"     && <InsightPanel />}
+        <div key={activeTab} className="page-enter">
+          {activeTab === "Dashboard"    && <DashboardPage />}
+          {activeTab === "Transactions" && <TxList />}
+          {activeTab === "Insights"     && <InsightPanel />}
+        </div>
       </main>
       <MobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>

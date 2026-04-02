@@ -1,4 +1,6 @@
-/* global styles and css variables */
+/* ============================================================
+   GLOBAL STYLES + ANIMATION SYSTEM
+   ============================================================ */
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -11,7 +13,6 @@
   --accent-light: #ccfbf1;
   --accent-hover: #0d6560;
 
-  /* richer light theme - better contrast, less washed out */
   --bg: #eef2f7;
   --surface: #ffffff;
   --surface-2: #e4eaf2;
@@ -26,14 +27,20 @@
 
   --radius: 12px;
   --radius-sm: 8px;
-  --shadow: 0 1px 4px rgba(0, 0, 0, 0.09), 0 4px 14px rgba(0, 0, 0, 0.07);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow: 0 2px 8px rgba(0,0,0,0.10), 0 6px 20px rgba(0,0,0,0.07);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.09);
 
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --transition: 0.22s ease;
+
+  /* ---- animation timing ---- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);  /* slight overshoot */
+  --ease-smooth:    cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:   0.18s;
+  --dur-normal: 0.28s;
+  --dur-slow:   0.42s;
 }
 
-/* dark mode */
 body.dark {
   --bg: #0f172a;
   --surface: #1e293b;
@@ -42,7 +49,7 @@ body.dark {
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  --shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow: 0 2px 8px rgba(0,0,0,0.35), 0 6px 20px rgba(0,0,0,0.25);
 }
 
 body {
@@ -50,12 +57,11 @@ body {
   background-color: var(--bg);
   color: var(--text-primary);
   min-height: 100vh;
-  transition: background-color var(--transition), color var(--transition);
+  transition: background-color var(--dur-normal) var(--ease-smooth),
+              color var(--dur-normal) var(--ease-smooth);
 }
 
-#root {
-  min-height: 100vh;
-}
+#root { min-height: 100vh; }
 
 a { color: inherit; text-decoration: none; }
 
@@ -64,30 +70,137 @@ button {
   border: none;
   background: none;
   font-family: var(--font);
-  transition: background var(--transition), color var(--transition), opacity var(--transition);
 }
 
 input, select {
   font-family: var(--font);
-  transition: border-color var(--transition), background var(--transition);
 }
 
-/* reusable card */
+/* ---- card ---- */
 .card {
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   padding: 20px;
-  transition: background var(--transition), border-color var(--transition);
+  transition: background var(--dur-normal) var(--ease-smooth),
+              border-color var(--dur-normal) var(--ease-smooth),
+              box-shadow var(--dur-normal) var(--ease-smooth);
 }
 
-/* tab/page fade */
-.page-fade {
-  animation: pageFadeIn 0.22s ease;
+/* ============================================================
+   PAGE / TAB TRANSITIONS
+   Page slides in from the right when switching forward,
+   from the left when switching back. We use a single
+   "enter" animation — the key prop on the wrapper forces
+   a fresh mount every tab change.
+   ============================================================ */
+
+.page-enter {
+  animation: pageSlideIn var(--dur-slow) var(--ease-out-quart) both;
 }
 
-@keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================================
+   STAGGERED CARD ENTRANCE
+   Add .stagger-child to each card and they waterfall in.
+   ============================================================ */
+
+.stagger-child {
+  animation: staggerIn var(--dur-slow) var(--ease-out-quart) both;
+}
+
+/* each card gets a delay via inline style or nth-child */
+.stagger-child:nth-child(1) { animation-delay: 0.00s; }
+.stagger-child:nth-child(2) { animation-delay: 0.07s; }
+.stagger-child:nth-child(3) { animation-delay: 0.14s; }
+.stagger-child:nth-child(4) { animation-delay: 0.21s; }
+
+@keyframes staggerIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   TRANSACTION ROW ENTRANCE
+   Rows stagger in when the list re-renders (filter change).
+   Applied via inline style delay in TxRow.
+   ============================================================ */
+
+.tx-row-enter {
+  animation: rowSlideIn var(--dur-normal) var(--ease-out-quart) both;
+}
+
+@keyframes rowSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================================
+   EMPTY STATE ANIMATION
+   ============================================================ */
+
+.empty-enter {
+  animation: emptyBounceIn 0.5s var(--ease-spring) both;
+}
+
+@keyframes emptyBounceIn {
+  from { opacity: 0; transform: scale(0.85) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* ============================================================
+   MODAL ENTRANCE
+   ============================================================ */
+
+.modal-enter {
+  animation: modalIn var(--dur-normal) var(--ease-spring) both;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.backdrop-enter {
+  animation: backdropIn var(--dur-normal) var(--ease-smooth) both;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ============================================================
+   FOCUS RING — shared glow for all inputs/selects
+   ============================================================ */
+
+.focus-ring:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
+  transition: box-shadow var(--dur-fast) var(--ease-smooth),
+              border-color var(--dur-fast) var(--ease-smooth);
 }

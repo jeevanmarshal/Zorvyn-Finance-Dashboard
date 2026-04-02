@@ -67,8 +67,8 @@ export default function TxModal({ editTx, onClose }) {
   }
 
   return (
-    <div className="modal-backdrop" onClick={handleBackdropClick}>
-      <div className="modal">
+    <div className="modal-backdrop backdrop-enter" onClick={handleBackdropClick}>
+      <div className="modal modal-enter">
         <div className="modal-header">
           <h3 className="modal-title">
             {isEditing ? "Edit Transaction" : "Add Transaction"}

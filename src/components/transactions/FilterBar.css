@@ -23,14 +23,29 @@
   color: var(--text-primary);
   font-size: 13px;
   outline: none;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  /* every visual property transitions smoothly */
+  transition:
+    border-color var(--dur-fast)   var(--ease-smooth),
+    background   var(--dur-normal) var(--ease-smooth),
+    box-shadow   var(--dur-fast)   var(--ease-smooth),
+    transform    var(--dur-fast)   var(--ease-spring),
+    color        var(--dur-normal) var(--ease-smooth);
+  will-change: transform;
+}
+
+.filter-input:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
 }
 
 .filter-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
+  transform: translateY(-1px);
+  background: var(--surface);
 }
 
+/* search box */
 .search-wrap {
   position: relative;
   display: flex;
@@ -44,6 +59,7 @@
   left: 10px;
   font-size: 13px;
   pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-smooth);
 }
 
 .search-input {
@@ -62,17 +78,35 @@
   cursor: pointer;
   padding: 2px;
   line-height: 1;
+  border-radius: 4px;
+  /* pop in when it appears */
+  animation: clearBtnIn 0.18s var(--ease-spring) both;
+  transition: color var(--dur-fast) var(--ease-smooth),
+              transform var(--dur-fast) var(--ease-spring);
+}
+
+@keyframes clearBtnIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .search-clear:hover {
-  color: var(--text-primary);
+  color: var(--expense-color);
+  transform: scale(1.2);
 }
 
+/* dropdowns */
 .filter-select {
   cursor: pointer;
   min-width: 140px;
+  /* flash the accent color briefly when value changes */
 }
 
+.filter-select:focus {
+  transform: translateY(-1px);
+}
+
+/* clear filters button */
 .filter-reset {
   height: 38px;
   padding: 0 14px;
@@ -83,22 +117,30 @@
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
-  transition: all 0.15s;
   flex-shrink: 0;
+  /* pop in with a spring when filters activate */
+  animation: clearBtnIn 0.25s var(--ease-spring) both;
+  transition:
+    background  var(--dur-normal) var(--ease-smooth),
+    color       var(--dur-normal) var(--ease-smooth),
+    border-color var(--dur-normal) var(--ease-smooth),
+    transform   var(--dur-fast)   var(--ease-spring),
+    box-shadow  var(--dur-fast)   var(--ease-smooth);
 }
 
 .filter-reset:hover {
   background: var(--expense-color);
   color: white;
   border-color: var(--expense-color);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(200, 30, 30, 0.3);
+}
+
+.filter-reset:active {
+  transform: scale(0.95);
 }
 
 @media (max-width: 600px) {
-  .filter-bar__inputs {
-    flex-direction: column;
-  }
-  .filter-select {
-    min-width: unset;
-    width: 100%;
-  }
+  .filter-bar__inputs { flex-direction: column; }
+  .filter-select { min-width: unset; width: 100%; }
 }

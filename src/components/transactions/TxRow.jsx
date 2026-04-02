@@ -15,11 +15,17 @@ const CATEGORY_ICONS = {
   Refund: "↩️",
 }
 
-export default function TxRow({ tx, onEdit }) {
+export default function TxRow({ tx, onEdit, index = 0 }) {
   const { role, deleteTransaction } = useApp()
 
+  // cap the delay so the 20th row doesn't wait 2 seconds
+  const delay = Math.min(index * 0.04, 0.4)
+
   return (
-    <div className="tx-row">
+    <div
+      className="tx-row tx-row-enter"
+      style={{ animationDelay: `${delay}s` }}
+    >
       <div className="tx-row__icon">
         {CATEGORY_ICONS[tx.category] || "💰"}
       </div>
