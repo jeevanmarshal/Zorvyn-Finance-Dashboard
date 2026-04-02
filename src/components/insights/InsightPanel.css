@@ -1,0 +1,183 @@
+.insight-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-panel__header {
+  margin-bottom: 24px;
+}
+
+.insight-panel__title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.insight-panel__sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.insight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.insight-card__label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.insight-card__main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.insight-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.insight-card__value {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.insight-card__detail {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* progress bar */
+.insight-bar-track {
+  height: 7px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.insight-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.insight-bar-fill--accent  { background: var(--accent); }
+.insight-bar-fill--muted   { background: var(--text-muted); }
+.insight-bar-fill--purple  { background: #7c3aed; }
+
+/* mom badge */
+.insight-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.insight-badge--up   { background: #fee2e2; color: var(--expense-color); }
+.insight-badge--down { background: #dcfce7; color: var(--income-color); }
+.insight-badge--same { background: var(--surface-2); color: var(--text-muted); }
+
+body.dark .insight-badge--up   { background: #450a0a; color: #fca5a5; }
+body.dark .insight-badge--down { background: #14532d; color: #86efac; }
+
+/* mom mini bar chart */
+.mom-bars {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  height: 48px;
+}
+
+.mom-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.mom-bar-track {
+  width: 100%;
+  height: 36px;
+  background: var(--surface-2);
+  border-radius: 4px 4px 0 0;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.mom-bar-fill {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+  transition: height 0.5s ease;
+}
+
+.mom-bar-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* compare bars */
+.insight-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insight-compare__item {
+  display: grid;
+  grid-template-columns: 72px 1fr 72px;
+  align-items: center;
+  gap: 8px;
+}
+
+.insight-compare__label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.insight-compare__val {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* tip text at bottom of card */
+.insight-tip {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+
+@media (max-width: 700px) {
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
+}

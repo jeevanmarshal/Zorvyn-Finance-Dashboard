@@ -1,0 +1,25 @@
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px;
+}
+
+/* side-by-side charts row */
+.charts-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* on tablets, stack the charts vertically */
+@media (max-width: 800px) {
+  .charts-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-main {
+    padding: 20px 16px;
+  }
+}

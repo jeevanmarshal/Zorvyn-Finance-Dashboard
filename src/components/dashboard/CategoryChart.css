@@ -1,0 +1,4 @@
+.category-chart {
+  flex: 1;
+  min-width: 0; /* stops flex children from overflowing */
+}
