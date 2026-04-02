@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Finance Dashboard
 
 A personal finance tracker I built as part of a frontend screening assignment for Zorvyn FinTech. The goal was to build a clean UI for tracking transactions and understanding spending patterns.
@@ -41,3 +42,6 @@ Then open http://localhost:5173
 - Add a date range picker to filter by time period
 - Write some basic tests for the helper functions
 - The mobile layout for the filters bar could be cleaner
+=======
+# Zorvyn-Finance-Dashboard
+>>>>>>> f60789d4e18736cd6742697b4f6ca270fcc21564
