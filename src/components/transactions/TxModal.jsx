@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { useApp } from "../../context/AppContext"
 import CustomSelect from "../ui/CustomSelect"
 import "./TxModal.css"
@@ -8,41 +9,80 @@ const TYPE_OPTIONS = [
   { value: "income",  label: "Income" },
 ]
 
-const CATEGORY_OPTIONS = [
+// split categories by type so each dropdown only shows relevant options
+const INCOME_CATEGORIES = [
+  { value: "Salary",    label: "Salary" },
+  { value: "Freelance", label: "Freelance" },
+  { value: "Refund",    label: "Refund" },
+]
+
+const EXPENSE_CATEGORIES = [
   { value: "Food",          label: "Food" },
   { value: "Groceries",     label: "Groceries" },
   { value: "Bills",         label: "Bills" },
   { value: "Transport",     label: "Transport" },
   { value: "Shopping",      label: "Shopping" },
   { value: "Entertainment", label: "Entertainment" },
-  { value: "Salary",        label: "Salary" },
-  { value: "Freelance",     label: "Freelance" },
-  { value: "Refund",        label: "Refund" },
 ]
 
-// generate day/month/year options so we don't need a native date picker
-const DAY_OPTIONS   = Array.from({ length: 31 }, (_, i) => ({ value: String(i + 1).padStart(2,"0"), label: String(i + 1) }))
-const MONTH_OPTIONS = [
-  { value: "01", label: "January" }, { value: "02", label: "February" },
-  { value: "03", label: "March" },   { value: "04", label: "April" },
-  { value: "05", label: "May" },     { value: "06", label: "June" },
-  { value: "07", label: "July" },    { value: "08", label: "August" },
-  { value: "09", label: "September"},{ value: "10", label: "October" },
-  { value: "11", label: "November"}, { value: "12", label: "December" },
+// returns the right category list for the given type
+function categoriesFor(type) {
+  return type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
+}
+
+// returns the default first category for the given type
+function defaultCategory(type) {
+  return categoriesFor(type)[0].value
+}
+
+// ── date helpers ────────────────────────────────────────────
+// today's actual values — used to cap all dropdowns
+const TODAY = new Date()
+const TODAY_YEAR  = TODAY.getFullYear()
+const TODAY_MONTH = TODAY.getMonth() + 1   // 1-based
+const TODAY_DAY   = TODAY.getDate()
+
+// only allow years from 2024 up to current year (no future years)
+const YEAR_OPTIONS = Array.from(
+  { length: TODAY_YEAR - 2023 },
+  (_, i) => {
+    const y = String(2024 + i)
+    return { value: y, label: y }
+  }
+)
+
+const MONTH_NAMES = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
 ]
-const YEAR_OPTIONS  = [
-  { value: "2024", label: "2024" },
-  { value: "2025", label: "2025" },
-  { value: "2026", label: "2026" },
-  { value: "2027", label: "2027" },
-]
+
+// months available depend on selected year
+function getMonthOptions(year) {
+  const maxMonth = Number(year) === TODAY_YEAR ? TODAY_MONTH : 12
+  return Array.from({ length: maxMonth }, (_, i) => ({
+    value: String(i + 1).padStart(2, "0"),
+    label: MONTH_NAMES[i],
+  }))
+}
+
+// days available depend on selected year+month
+function getDayOptions(year, month) {
+  const y = Number(year)
+  const m = Number(month)
+  // actual days in that month (handles Feb + leap years correctly)
+  const daysInMonth = new Date(y, m, 0).getDate()
+  const maxDay = (y === TODAY_YEAR && m === TODAY_MONTH) ? TODAY_DAY : daysInMonth
+  return Array.from({ length: maxDay }, (_, i) => ({
+    value: String(i + 1).padStart(2, "0"),
+    label: String(i + 1),
+  }))
+}
 
 function todayParts() {
-  const d = new Date()
   return {
-    day:   String(d.getDate()).padStart(2,"0"),
-    month: String(d.getMonth() + 1).padStart(2,"0"),
-    year:  String(d.getFullYear()),
+    day:   String(TODAY_DAY).padStart(2, "0"),
+    month: String(TODAY_MONTH).padStart(2, "0"),
+    year:  String(TODAY_YEAR),
   }
 }
 
@@ -52,25 +92,43 @@ function parseDateParts(dateStr) {
   return { day, month, year }
 }
 
+// clamp a day/month value so it never exceeds the allowed max
+function clampDateParts(parts) {
+  const y = Number(parts.year)
+  const m = Number(parts.month)
+  const maxMonth = y === TODAY_YEAR ? TODAY_MONTH : 12
+  const clampedMonth = Math.min(m, maxMonth)
+  const daysInMonth = new Date(y, clampedMonth, 0).getDate()
+  const maxDay = (y === TODAY_YEAR && clampedMonth === TODAY_MONTH) ? TODAY_DAY : daysInMonth
+  const clampedDay = Math.min(Number(parts.day), maxDay)
+  return {
+    year:  parts.year,
+    month: String(clampedMonth).padStart(2, "0"),
+    day:   String(clampedDay).padStart(2, "0"),
+  }
+}
+// ────────────────────────────────────────────────────────────
+
 export default function TxModal({ editTx, onClose }) {
   const { addTransaction, updateTransaction } = useApp()
+
   const [form, setForm] = useState({
     description: "",
     amount: "",
     type: "expense",
-    category: "Food",
+    category: defaultCategory("expense"),
   })
   const [dateParts, setDateParts] = useState(todayParts())
   const [error, setError] = useState("")
   const isEditing = !!editTx
 
-  // iOS-safe scroll lock: position:fixed is the only reliable cross-browser fix
+  // iOS-safe scroll lock
   useEffect(() => {
     const scrollY = window.scrollY
-    document.body.style.position   = "fixed"
-    document.body.style.top        = `-${scrollY}px`
-    document.body.style.width      = "100%"
-    document.body.style.overflowY  = "scroll" // keep scrollbar width so layout doesn't jump
+    document.body.style.position  = "fixed"
+    document.body.style.top       = `-${scrollY}px`
+    document.body.style.width     = "100%"
+    document.body.style.overflowY = "scroll"
     return () => {
       document.body.style.position  = ""
       document.body.style.top       = ""
@@ -80,6 +138,7 @@ export default function TxModal({ editTx, onClose }) {
     }
   }, [])
 
+  // pre-fill form when editing
   useEffect(() => {
     if (editTx) {
       setForm({
@@ -93,12 +152,25 @@ export default function TxModal({ editTx, onClose }) {
   }, [editTx])
 
   function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+
+    if (name === "type") {
+      // when type switches, reset category to the first valid option for that type
+      setForm((prev) => ({
+        ...prev,
+        type: value,
+        category: defaultCategory(value),
+      }))
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }))
+    }
     setError("")
   }
 
   function handleDateChange(part, value) {
-    setDateParts((prev) => ({ ...prev, [part]: value }))
+    // after changing year or month, clamp day/month so they don't exceed today
+    const updated = clampDateParts({ ...dateParts, [part]: value })
+    setDateParts(updated)
   }
 
   function handleSubmit() {
@@ -114,7 +186,12 @@ export default function TxModal({ editTx, onClose }) {
     if (e.target === e.currentTarget) onClose()
   }
 
-  return (
+  // compute available options based on current selections
+  const availableCategories = categoriesFor(form.type)
+  const monthOptions = getMonthOptions(dateParts.year)
+  const dayOptions   = getDayOptions(dateParts.year, dateParts.month)
+
+  return createPortal(
     <div className="modal-backdrop backdrop-enter" onClick={handleBackdropClick}>
       <div className="modal modal-enter">
         <div className="modal-header">
@@ -123,7 +200,6 @@ export default function TxModal({ editTx, onClose }) {
         </div>
 
         <div className="modal-body">
-          {/* description */}
           <label className="modal-label" htmlFor="tx-desc">
             Description
             <input
@@ -137,7 +213,6 @@ export default function TxModal({ editTx, onClose }) {
             />
           </label>
 
-          {/* amount + type */}
           <div className="modal-row">
             <label className="modal-label" htmlFor="tx-amount">
               Amount (₹)
@@ -154,34 +229,49 @@ export default function TxModal({ editTx, onClose }) {
             </label>
             <label className="modal-label">
               Type
-              <CustomSelect id="tx-type" name="type" value={form.type} onChange={handleChange} options={TYPE_OPTIONS} />
+              <CustomSelect
+                id="tx-type"
+                name="type"
+                value={form.type}
+                onChange={handleChange}
+                options={TYPE_OPTIONS}
+              />
             </label>
           </div>
 
-          {/* category */}
+          {/* category list changes based on selected type */}
           <label className="modal-label">
             Category
-            <CustomSelect id="tx-category" name="category" value={form.category} onChange={handleChange} options={CATEGORY_OPTIONS} />
+            <CustomSelect
+              id="tx-category"
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              options={availableCategories}
+            />
           </label>
 
-          {/* date — three dropdowns instead of native date input */}
+          {/* date — three dropdowns capped at today */}
           <div className="modal-label">
             Date
             <div className="date-row">
               <CustomSelect
-                id="tx-day" name="day"
+                id="tx-day"
+                name="day"
                 value={dateParts.day}
                 onChange={(e) => handleDateChange("day", e.target.value)}
-                options={DAY_OPTIONS}
+                options={dayOptions}
               />
               <CustomSelect
-                id="tx-month" name="month"
+                id="tx-month"
+                name="month"
                 value={dateParts.month}
                 onChange={(e) => handleDateChange("month", e.target.value)}
-                options={MONTH_OPTIONS}
+                options={monthOptions}
               />
               <CustomSelect
-                id="tx-year" name="year"
+                id="tx-year"
+                name="year"
                 value={dateParts.year}
                 onChange={(e) => handleDateChange("year", e.target.value)}
                 options={YEAR_OPTIONS}
@@ -199,6 +289,7 @@ export default function TxModal({ editTx, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
